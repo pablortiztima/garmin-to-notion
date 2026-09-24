@@ -2,7 +2,8 @@ name: Garmin to Notion Sync
 
 on:
   schedule:
-    - cron: '0 6 * * *'
+    # 10:00 y 22:00 hora de Chile (13:00 y 01:00 UTC)
+    - cron: '0 1,13 * * *'
   workflow_dispatch:
 
 jobs:
@@ -45,8 +46,12 @@ jobs:
           GARMIN_TOKENS: ${{ secrets.GARMIN_TOKENS }}
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           GARMIN_TOKENSTORE: ~/.garmin_tokens
-          TIMEZONE: ${{ vars.TIMEZONE || 'UTC' }}
-          GARMIN_DAYS_BACK: ${{ vars.GARMIN_DAYS_BACK || '30' }}
+          # Bases de Notion: "Sesiones y eventos" e "Implementos"
+          NOTION_DB_ID: 14995694e2d1454b8388cf2b7e953437
+          NOTION_GEAR_DB_ID: 5ba2c48dc4504bc9a8521a833f21f162
+          TIMEZONE: America/Santiago
+          # Opcional: ignora actividades anteriores a esta fecha (AAAA-MM-DD). Vacío = todas.
+          SYNC_FROM: ${{ vars.SYNC_FROM || '' }}
           GARMIN_ACTIVITIES_FETCH_LIMIT: ${{ vars.GARMIN_ACTIVITIES_FETCH_LIMIT || '1000' }}
           PYTHONPATH: src
-        run: python -m garmin_to_notion all
+        run: python -m garmin_to_notion activities
